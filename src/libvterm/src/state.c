@@ -48,10 +48,12 @@ static void erase(VTermState *state, VTermRect rect, int selective)
   if(rect.end_col == state->cols) {
     int row;
     /* If we're erasing the final cells of any lines, cancel the continuation
-     * marker on the subsequent line
+     * marker on the subsequent line, and similarly the marker of a fully erased line
      */
     for(row = rect.start_row + 1; row < rect.end_row + 1 && row < state->rows; row++)
       state->lineinfo[row].continuation = 0;
+	if (rect.start_col == 0)
+      state->lineinfo[rect.start_row].continuation = 0;
   }
 
   if(state->callbacks && state->callbacks->erase)
