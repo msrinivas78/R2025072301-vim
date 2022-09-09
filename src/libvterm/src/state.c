@@ -151,15 +151,21 @@ static void scroll(VTermState *state, VTermRect rect, int downward, int rightwar
       memmove(state->lineinfo + rect.start_row,
               state->lineinfo + rect.start_row + downward,
               height * sizeof(state->lineinfo[0]));
-      for(row = rect.end_row - downward; row < rect.end_row; row++)
+      for(row = rect.end_row - downward; row < rect.end_row; row++) {
+        if(state->callbacks && state->callbacks->setlineinfo)
+          (*state->callbacks->setlineinfo)(row, &zeroLineInfo, state->lineinfo + row, state->cbdata);
         state->lineinfo[row] = zeroLineInfo;
+      }
     }
     else {
       memmove(state->lineinfo + rect.start_row - downward,
               state->lineinfo + rect.start_row,
               height * sizeof(state->lineinfo[0]));
-      for(row = rect.start_row; row < rect.start_row - downward; row++)
+      for(row = rect.start_row; row < rect.start_row - downward; row++) {
+        if(state->callbacks && state->callbacks->setlineinfo)
+          (*state->callbacks->setlineinfo)(row, &zeroLineInfo, state->lineinfo + row, state->cbdata);
         state->lineinfo[row] = zeroLineInfo;
+      }
     }
   }
 }
