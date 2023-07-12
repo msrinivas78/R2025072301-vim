@@ -138,6 +138,8 @@ static void scroll(VTermState *state, VTermRect rect, int downward, int rightwar
 
   if(state->callbacks && state->callbacks->scrollrect)
 	state_scrollrect_success = (*state->callbacks->scrollrect)(rect, downward, rightward, state->cbdata);
+  else if (state->callbacks)
+    state_scrollrect_success = 0;
 
   if(state->callbacks && !state_scrollrect_success)
     vterm_scroll_rect(rect, downward, rightward,
