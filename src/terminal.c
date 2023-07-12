@@ -3457,7 +3457,7 @@ limit_scrollback(term_T *term, garray_T *gap, int update_buffer)
  * Handle a line that is pushed off the top of the screen.
  */
     static int
-handle_pushline(int cols, const VTermScreenCell *cells, void *user)
+handle_pushline(int cols, const VTermScreenCell *cells, const VTermLineInfo *info, void *user)
 {
     term_T	*term = (term_T *)user;
     garray_T	*gap;
@@ -3535,7 +3535,7 @@ handle_pushline(int cols, const VTermScreenCell *cells, void *user)
 	*(text + text_len) = NUL;
     }
     if (update_buffer)
-	add_scrollback_line_to_buffer(term, text, text_len);
+	add_scrollback_line_to_buffer(term, text, text_len, 0);
 
     line = (sb_line_T *)gap->ga_data + gap->ga_len;
     line->sb_cols = len;
@@ -3586,7 +3586,7 @@ handle_postponed_scrollback(term_T *term)
 	text = pp_line->sb_text;
 	if (text == NULL)
 	    text = (char_u *)"";
-	add_scrollback_line_to_buffer(term, text, (int)STRLEN(text));
+	add_scrollback_line_to_buffer(term, text, (int)STRLEN(text), 0);
 	vim_free(pp_line->sb_text);
 
 	line = (sb_line_T *)term->tl_scrollback.ga_data

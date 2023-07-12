@@ -118,6 +118,7 @@ static void scroll(VTermState *state, VTermRect rect, int downward, int rightwar
 {
   int rows;
   int cols;
+  int state_scrollrect_success;
   if(!downward && !rightward)
     return;
 
@@ -132,6 +133,13 @@ static void scroll(VTermState *state, VTermRect rect, int downward, int rightwar
     rightward = cols;
   else if(rightward < -cols)
     rightward = -cols;
+
+  if(state->callbacks && state->callbacks->scrollrect)
+	state_scrollrect_success = (*state->callbacks->scrollrect)(rect, downward, rightward, state->cbdata);
+
+  if(state->callbacks && !state_scrollrect_success)
+    vterm_scroll_rect(rect, downward, rightward,
+        state->callbacks->moverect, state->callbacks->erase, state->cbdata);
 
   // Update lineinfo if full line
   if(rect.start_col == 0 && rect.end_col == state->cols && rightward == 0) {
@@ -154,14 +162,6 @@ static void scroll(VTermState *state, VTermRect rect, int downward, int rightwar
         state->lineinfo[row] = zeroLineInfo;
     }
   }
-
-  if(state->callbacks && state->callbacks->scrollrect)
-    if((*state->callbacks->scrollrect)(rect, downward, rightward, state->cbdata))
-      return;
-
-  if(state->callbacks)
-    vterm_scroll_rect(rect, downward, rightward,
-        state->callbacks->moverect, state->callbacks->erase, state->cbdata);
 }
 
 static void linefeed(VTermState *state)
