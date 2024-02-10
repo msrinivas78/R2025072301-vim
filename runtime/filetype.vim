@@ -1443,7 +1443,10 @@ au BufNewFile,BufRead *.markdown,*.mdown,*.mkd,*.mkdn,*.mdwn,*.md
 " Mason (it used to include *.comp, are those Mason files?)
 au BufNewFile,BufRead *.mason,*.mhtml	setf mason
 
-" Mathematica, Matlab, Murphi, Objective C or Octave
+" Mathematica, Matlab, Miranda, Murphi, Objective C or Octave
+au BufNewFile,BufRead *.lit.m
+      \ call miranda#SetFileTypeInfo(#{ literate: v:true }) |
+      \ setf miranda
 au BufNewFile,BufRead *.m			call dist#ft#FTm()
 
 " Mathematica notebook and package files
