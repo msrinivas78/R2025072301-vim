@@ -214,8 +214,9 @@ func Test_popup_complete()
   call feedkeys("aM\<f5>\<enter>\<esc>", 'tx')
   call assert_equal(["March", "M", "March"], getline(1,4))
   %d
-endfunc
 
+  set completeopt&
+endfunc
 
 func Test_popup_completion_insertmode()
   new
@@ -1078,6 +1079,7 @@ func Test_popup_complete_info_01()
   setlocal thesaurus=Xdummy.txt
   setlocal omnifunc=syntaxcomplete#Complete
   setlocal completefunc=syntaxcomplete#Complete
+  setlocal completeopt+=noinsert
   setlocal spell
   for [keys, mode_name] in [
         \ ["", ''],

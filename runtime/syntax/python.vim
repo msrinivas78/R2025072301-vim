@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:	Python
 " Maintainer:	Zvezdan Petkovic <zpetkovic@acm.org>
-" Last Change:	2025 Jul 14
+" Last Change:	2025 Jul 17
 " Credits:	Neil Schemenauer <nas@python.ca>
 "		Dmitry Vasiliev
 "		Rob B
