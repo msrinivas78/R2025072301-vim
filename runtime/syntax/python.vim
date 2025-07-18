@@ -163,25 +163,25 @@ syn region  pythonFString
       \ start=+\cF\z(['"]\)+
       \ end="\z1"
       \ skip="\\\\\|\\\z1"
-      \ contains=pythonEscape,pythonUnicodeEscape,@Spell
+      \ contains=pythonFStringField,pythonEscape,pythonUnicodeEscape,@Spell
 syn region  pythonFString
       \ matchgroup=pythonTripleQuotes
       \ start=+\cF\z('''\|"""\)+
       \ end="\z1"
       \ keepend
-      \ contains=pythonEscape,pythonUnicodeEscape,pythonSpaceError,pythonDoctest,@Spell
+      \ contains=pythonFStringField,pythonEscape,pythonUnicodeEscape,pythonSpaceError,pythonDoctest,@Spell
 syn region  pythonRawFString
       \ matchgroup=pythonQuotes
       \ start=+\c\%(FR\|RF\)\z(['"]\)+
       \ end="\z1"
       \ skip="\\\\\|\\\z1"
-      \ contains=@Spell
+      \ contains=pythonFStringField,@Spell
 syn region  pythonRawFString
       \ matchgroup=pythonTripleQuotes
       \ start=+\c\%(FR\|RF\)\z('''\|"""\)+
       \ end="\z1"
       \ keepend
-      \ contains=pythonSpaceError,pythonDoctest,@Spell
+      \ contains=pythonFStringField,pythonSpaceError,pythonDoctest,@Spell
 
 " Bytes
 syn region  pythonBytes
@@ -215,6 +215,28 @@ syn match   pythonUnicodeEscape	"\%(\\u\x\{4}\|\\U\x\{8}\)" contained
 " The specification: https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-4/#G135165
 syn match   pythonUnicodeEscape	"\\N{\a\+\%(\%(\s\a\+[[:alnum:]]*\)\|\%(-[[:alnum:]]\+\)\)*}" contained
 syn match   pythonEscape	"\\$"
+
+" F-string replacement fields
+"
+" - Double braces or Unicode escape sequences do not start replacement fields
+"
+"	\%( { \| \\N \)\@2<! { {\@!
+"
+" - Format specifications may include nested replacement fields
+"
+"       { [^}]\+ }
+"
+" - Python 3.12 allows comments in replacement fields, but `#` is also a format
+"   specification - https://docs.python.org/3/library/string.html#formatspec
+"
+"       \%( : \%( .\= [<>=^] \)\= [-+ ]\= \)\@4<! # .* $
+"
+syn region  pythonFStringField
+    \ matchgroup=pythonFStringDelim
+    \ start=/\%({\|\\N\)\@2<!{{\@!/
+    \ end=/}/
+    \ skip=/{[^}]\+}\|\%(:\%(.\=[<>=^]\)\=[-+ ]\=\)\@4<!#.*$/
+    \ contained
 
 " It is very important to understand all details before changing the
 " regular expressions below or their order.
@@ -373,6 +395,8 @@ hi def link pythonQuotes		String
 hi def link pythonTripleQuotes		pythonQuotes
 hi def link pythonEscape		Special
 hi def link pythonUnicodeEscape		pythonEscape
+hi def link pythonFStringField		Todo
+hi def link pythonFStringDelim		Error
 if !exists("python_no_number_highlight")
   hi def link pythonNumber		Number
 endif
