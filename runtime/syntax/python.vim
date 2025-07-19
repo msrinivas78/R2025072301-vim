@@ -217,23 +217,27 @@ syn match   pythonUnicodeEscape	"\\N{\a\+\%(\%(\s\a\+[[:alnum:]]*\)\|\%(-[[:alnu
 syn match   pythonEscape	"\\$"
 
 " F-string replacement fields
-"
-" - Format specifications may include nested replacement fields
-"
-"       { [^}]\+ }
-"
-" - Python 3.12 allows comments in replacement fields, but `#` is also a format
-"   specification - https://docs.python.org/3/library/string.html#formatspec
-"
-"       \%( : \%( .\= [<>=^] \)\= [-+ ]\= \)\@4<! # .* $
-"
 syn region  pythonFStringField
-    \ matchgroup=pythonFStringDelim
+    \ matchgroup=pythonFStringDelimiter
     \ start=/{/
     \ end=/}/
-    \ skip=/{[^}]\+}\|\%(:\%(.\=[<>=^]\)\=[-+ ]\=\)\@4<!#.*$/
+    \ skip=/#.*$/
     \ contained
-syn match   pythonFStringSkip	/{{\|\\N{/ transparent contained contains=NONE
+    \ contains=pythonFStringFormatSpec
+" Doubled braces and Unicode escapes are not replacement fields
+syn match   pythonFStringSkip		/{{\|\\N{/ transparent contained contains=NONE
+" Format specifications may include nested replacement fields
+syn match   pythonFStringFormatSpec	/{[^}]\+}/ transparent contained contains=NONE
+" Format specifiers may include the `#` option
+"
+" XXX: This does not match all of https://docs.python.org/3/library/string.html#formatspec,
+"      only enough to disambiguate from comments
+"
+" XXX: A simpler (but less robust) version of this match would be
+"
+"					/:.\{,3}#[^}]*/
+"
+syn match   pythonFStringFormatSpec	/:\%(.\=[<>=^]\)\=[ +-]\=#[^}]*/ transparent contained contains=NONE
 
 " It is very important to understand all details before changing the
 " regular expressions below or their order.
@@ -393,7 +397,7 @@ hi def link pythonTripleQuotes		pythonQuotes
 hi def link pythonEscape		Special
 hi def link pythonUnicodeEscape		pythonEscape
 hi def link pythonFStringField		Todo
-hi def link pythonFStringDelim		Error
+hi def link pythonFStringDelimiter	Error
 if !exists("python_no_number_highlight")
   hi def link pythonNumber		Number
 endif
