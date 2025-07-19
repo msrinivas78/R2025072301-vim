@@ -163,25 +163,25 @@ syn region  pythonFString
       \ start=+\cF\z(['"]\)+
       \ end="\z1"
       \ skip="\\\\\|\\\z1"
-      \ contains=pythonFStringField,pythonEscape,pythonUnicodeEscape,@Spell
+      \ contains=pythonFStringField,pythonFStringSkip,pythonEscape,pythonUnicodeEscape,@Spell
 syn region  pythonFString
       \ matchgroup=pythonTripleQuotes
       \ start=+\cF\z('''\|"""\)+
       \ end="\z1"
       \ keepend
-      \ contains=pythonFStringField,pythonEscape,pythonUnicodeEscape,pythonSpaceError,pythonDoctest,@Spell
+      \ contains=pythonFStringField,pythonFStringSkip,pythonEscape,pythonUnicodeEscape,pythonSpaceError,pythonDoctest,@Spell
 syn region  pythonRawFString
       \ matchgroup=pythonQuotes
       \ start=+\c\%(FR\|RF\)\z(['"]\)+
       \ end="\z1"
       \ skip="\\\\\|\\\z1"
-      \ contains=pythonFStringField,@Spell
+      \ contains=pythonFStringField,pythonFStringSkip,@Spell
 syn region  pythonRawFString
       \ matchgroup=pythonTripleQuotes
       \ start=+\c\%(FR\|RF\)\z('''\|"""\)+
       \ end="\z1"
       \ keepend
-      \ contains=pythonFStringField,pythonSpaceError,pythonDoctest,@Spell
+      \ contains=pythonFStringField,pythonFStringSkip,pythonSpaceError,pythonDoctest,@Spell
 
 " Bytes
 syn region  pythonBytes
@@ -218,10 +218,6 @@ syn match   pythonEscape	"\\$"
 
 " F-string replacement fields
 "
-" - Double braces or Unicode escape sequences do not start replacement fields
-"
-"	\%( { \| \\N \)\@2<! { {\@!
-"
 " - Format specifications may include nested replacement fields
 "
 "       { [^}]\+ }
@@ -233,10 +229,11 @@ syn match   pythonEscape	"\\$"
 "
 syn region  pythonFStringField
     \ matchgroup=pythonFStringDelim
-    \ start=/\%({\|\\N\)\@2<!{{\@!/
+    \ start=/{/
     \ end=/}/
     \ skip=/{[^}]\+}\|\%(:\%(.\=[<>=^]\)\=[-+ ]\=\)\@4<!#.*$/
     \ contained
+syn match   pythonFStringSkip	/{{\|\\N{/ transparent contained contains=NONE
 
 " It is very important to understand all details before changing the
 " regular expressions below or their order.
