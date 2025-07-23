@@ -137,3 +137,5 @@ Most of Vim was created by Bram Moolenaar <Bram@vim.org>, ":help Bram-Moolenaar"
 
 Send any other comments, patches, flowers and suggestions to the vim-dev
 mailing list: <vim-dev@vim.org>
+
+Thank You
